@@ -329,7 +329,7 @@ st.markdown("""
         justify-content: center;
         width: 100%;
         max-width: 900px;
-        margin: 0 auto 30px auto !important;
+        margin: 30px auto 30px auto !important;
         padding: 30px 20px 20px 20px;
         gap: 0;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(232, 245, 233, 0.5) 100%);
@@ -884,7 +884,7 @@ st.markdown("""
         }
         
         .hero-section {
-            margin-bottom: 20px !important;
+            margin: 20px auto 20px auto !important;
         }
         
         .language-toggle-wrapper .stButton > button {
