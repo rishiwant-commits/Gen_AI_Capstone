@@ -299,8 +299,8 @@ st.markdown("""
     
     /* Remove spacing from all containers */
     [data-testid="stForm"] {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
+        margin-top: 25px !important;
+        padding-top: 10px !important;
     }
     
     [data-testid="stColumnBlock"] {
@@ -329,7 +329,7 @@ st.markdown("""
         justify-content: center;
         width: 100%;
         max-width: 900px;
-        margin: 0 auto !important;
+        margin: 0 auto 30px auto !important;
         padding: 30px 20px 20px 20px;
         gap: 0;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(232, 245, 233, 0.5) 100%);
@@ -455,7 +455,7 @@ st.markdown("""
         backdrop-filter: blur(20px) saturate(180%);
         border-radius: 20px;
         padding: 28px;
-        margin: 20px 0;
+        margin: 25px 0;
         box-shadow: 
             0 8px 32px rgba(0, 0, 0, 0.12),
             0 2px 8px rgba(0, 0, 0, 0.08),
@@ -465,6 +465,11 @@ st.markdown("""
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
+    }
+    
+    /* First section card - extra top margin */
+    .section-card:first-of-type {
+        margin-top: 35px;
     }
     
     .section-card::before {
@@ -878,6 +883,10 @@ st.markdown("""
             padding: 0.5rem;
         }
         
+        .hero-section {
+            margin-bottom: 20px !important;
+        }
+        
         .language-toggle-wrapper .stButton > button {
             font-size: 0.75rem !important;
             padding: 6px 10px !important;
@@ -983,6 +992,9 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+# Add spacing between hero and form
+st.markdown('<div style="margin: 20px 0;"></div>', unsafe_allow_html=True)
 
 # ================= INPUT FORM =================
 with st.form("prediction_form"):
