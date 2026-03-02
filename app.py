@@ -307,12 +307,35 @@ st.markdown("""
         margin: 0 !important;
     }
     
+    /* Form Submit Button Container */
+    [data-testid="stForm"] .stButton {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px !important;
+    }
+    
     /* Minimize all gaps and spacings */
     div:has(> [data-testid="stButton"]) {
         margin-top: 0 !important;
         padding-top: 0 !important;
     }
     
+    /* Hero Section Container */
+    .hero-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 30px 20px 20px 20px;
+        margin: 0 !important;
+        gap: 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(232, 245, 233, 0.5) 100%);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
     /* Header Styling */
     h1 {
         background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
@@ -321,18 +344,30 @@ st.markdown("""
         font-size: clamp(1.8rem, 5vw, 3rem);
         font-weight: 800;
         text-align: center;
-        margin-bottom: 0.5rem;
-        line-height: 1.2;
-        margin-top: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.1;
     }
     
     .subtitle {
         text-align: center;
         color: #555;
         font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-        margin-bottom: 1.5rem;
-        padding: 0 1rem;
-        margin-top: 0 !important;
+        margin: 8px 0 0 0 !important;
+        padding: 0 1rem !important;
+        line-height: 1.4;
+        font-weight: 500;
+    }
+
+    /* CTA Buttons Container */
+    .cta-buttons-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin: 16px 0 0 0 !important;
+        padding: 0 !important;
     }
     
     /* Language Toggle - Top Right of Content */
@@ -402,8 +437,14 @@ st.markdown("""
         font-size: clamp(0.75rem, 2vw, 0.9rem);
         font-weight: 600;
         display: inline-block;
-        margin: 5px;
+        margin: 0 6px !important;
         box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .ai-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 16px rgba(102, 126, 234, 0.4);
     }
     
     /* Card-Based Section Headers */
@@ -507,24 +548,26 @@ st.markdown("""
     
     /* Big CTA Button - Premium Glassmorphism */
     .stButton > button {
-        width: 100%;
+        width: auto !important;
+        min-width: 180px;
         background: linear-gradient(135deg, #4CAF50 0%, #45a049 50%, #66BB6A 100%);
         background-size: 200% 100%;
         color: white;
-        font-size: clamp(1rem, 3vw, 1.3rem);
-        font-weight: 800;
-        padding: 18px 32px;
+        font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        font-weight: 700;
+        padding: 12px 28px;
         border-radius: 16px;
         border: 1.5px solid rgba(255, 255, 255, 0.3);
         box-shadow: \n            0 8px 24px rgba(76, 175, 80, 0.35),\n            0 2px 8px rgba(0, 0, 0, 0.1),\n            inset 0 1px 0 rgba(255, 255, 255, 0.3);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
-        margin-top: 20px;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        margin: 0 !important;
+        text-transform: none;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         position: relative;
         overflow: hidden;
+        white-space: nowrap;
     }
     
     .stButton > button::before {
@@ -543,7 +586,7 @@ st.markdown("""
     .stButton > button:hover {
         background-position: 100% 0;
         box-shadow: \n            0 12px 32px rgba(76, 175, 80, 0.45),\n            0 4px 12px rgba(0, 0, 0, 0.15),\n            inset 0 1px 0 rgba(255, 255, 255, 0.4);
-        transform: translateY(-3px) scale(1.02);
+        transform: translateY(-2px);
     }
     
     .stButton > button:hover::before {
@@ -552,7 +595,7 @@ st.markdown("""
     }
     
     .stButton > button:active {
-        transform: translateY(-1px) scale(0.98);
+        transform: translateY(0);
         box-shadow: \n            0 4px 16px rgba(76, 175, 80, 0.35),\n            0 2px 6px rgba(0, 0, 0, 0.1);
     }
     
@@ -788,17 +831,15 @@ with col4:
 
 # Title and Logo
 st.markdown(f"""
-<div style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: 700; color: #1e7e5c;">
-    {lucide_icon('agriculture', 'lg')} {t('title')}
-</div>
-""", unsafe_allow_html=True)
-st.markdown(f'<p class="subtitle">{t("subtitle")}</p>', unsafe_allow_html=True)
-
-# AI Badges
-st.markdown(f"""
-<div style="text-align: center; margin-bottom: 30px;">
-    <span class="ai-badge">{t('ai_badge')}</span>
-    <span class="ai-badge">{t('ml_badge')}</span>
+<div class="hero-section">
+    <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        {lucide_icon('sprout', 'lg')} {t('title')}
+    </h1>
+    <p class="subtitle">{t("subtitle")}</p>
+    <div class="cta-buttons-container">
+        <span class="ai-badge">{t('ai_badge')}</span>
+        <span class="ai-badge">{t('ml_badge')}</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
