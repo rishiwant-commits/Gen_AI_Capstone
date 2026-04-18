@@ -5,6 +5,11 @@ import joblib
 import time
 import base64
 
+from intelligence.issue_detector import detect_issues
+from intelligence.risk_analyzer import analyze_risk
+from intelligence.recommender import generate_recommendations
+from intelligence.explainer import get_feature_contributions
+
 # ================= LUCIDE SVG ICONS =================
 LUCIDE_ICONS = {
     'agriculture': '''<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M4 6l10-4 10 4M4 6v11c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6M4 6l10 5 10-5M8 10v8M12 10v8M16 10v8"/></svg>''',
@@ -1129,24 +1134,26 @@ if submit_button:
         
         try:
             # Collect all inputs
-            input_data = {
-                'N': N, 'P': P, 'K': K,
-                'Soil_pH': Soil_pH,
-                'Soil_Moisture': Soil_Moisture,
-                'Organic_Carbon': Organic_Carbon,
-                'Temperature': Temperature,
-                'Humidity': Humidity,
-                'Rainfall': Rainfall,
-                'Sunlight_Hours': Sunlight_Hours,
-                'Wind_Speed': Wind_Speed,
-                'Altitude': Altitude,
-                'Fertilizer_Used': Fertilizer_Used,
-                'Pesticide_Used': Pesticide_Used,
-                'Soil_Type': Soil_Type,
-                'Region': Region,
-                'Season': Season,
-                'Crop_Type': Crop_Type,
-                'Irrigation_Type': Irrigation_Type
+            user_input_dict = {
+                "N": N,
+                "P": P,
+                "K": K,
+                "Soil_pH": Soil_pH,
+                "Soil_Moisture": Soil_Moisture,
+                "Organic_Carbon": Organic_Carbon,
+                "Temperature": Temperature,
+                "Humidity": Humidity,
+                "Rainfall": Rainfall,
+                "Sunlight_Hours": Sunlight_Hours,
+                "Wind_Speed": Wind_Speed,
+                "Altitude": Altitude,
+                "Fertilizer_Used": Fertilizer_Used,
+                "Pesticide_Used": Pesticide_Used,
+                "Soil_Type": Soil_Type,
+                "Region": Region,
+                "Season": Season,
+                "Crop_Type": Crop_Type,
+                "Irrigation_Type": Irrigation_Type
             }
             
             # Create DataFrame with all columns initialized to 0
@@ -1170,10 +1177,57 @@ if submit_button:
                 col_name = f"{field}_{value}"
                 if col_name in input_df.columns:
                     input_df[col_name] = 1
+
+            contribution_df = get_feature_contributions(
+            model,
+            final_input_df,
+            scaler,
+            final_input_df.columns
+        )
             
             # Scale and predict
             input_scaled = scaler.transform(input_df)
             prediction = model.predict(input_scaled)[0]
+
+            # ================= INTELLIGENCE LAYER =================
+
+            issues = detect_issues(user_input_dict)
+            risk = analyze_risk(prediction)
+            recommendations = generate_recommendations(issues)
+
+            st.subheader("Why this prediction? (Feature Impact)")
+
+            top_negative = contribution_df[contribution_df["Contribution"] < 0].head(3)
+            top_positive = contribution_df[contribution_df["Contribution"] > 0].head(3)
+
+            st.write("Factors reducing yield:")
+            for _, row in top_negative.iterrows():
+                st.write(f"- {row['Feature']}")
+
+            st.write("Factors improving yield:")
+            for _, row in top_positive.iterrows():
+                st.write(f"- {row['Feature']}")
+
+
+            st.subheader("Yield Prediction")
+            st.write(f"{prediction:.2f} ton/hectare")
+
+            st.subheader("Risk Level")
+            st.write(risk)
+
+            st.subheader("Detected Issues")
+            if issues:
+                for issue in issues:
+                    st.write(f"- {issue}")
+            else:
+                st.write("No major issues detected")
+
+            st.subheader("Recommendations")
+            if recommendations:
+                for rec in recommendations:
+                    st.write(f"- {rec}")
+            else:
+                st.write("All parameters look optimal")
             
             # Calculate confidence (simplified - based on input completeness)
             confidence = t('high') if prediction > 5 else t('medium')
@@ -1215,7 +1269,7 @@ if submit_button:
             st.markdown('</div>', unsafe_allow_html=True)
             
         except Exception as e:
-            st.error(f"❌ {t('error_msg')}")
+            st.error(f"{t('error_msg')}")
             st.exception(e)
 
 # ================= FOOTER =================
