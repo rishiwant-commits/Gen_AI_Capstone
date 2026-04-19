@@ -4,9 +4,11 @@ pandas
 joblib
 scikit-learn
 langchain
+langgraph
 langchain-community
 langchain-huggingface
 langchain-text-splitters
+python-dotenv
 faiss-cpu
 sentence-transformers
 huggingface_hub

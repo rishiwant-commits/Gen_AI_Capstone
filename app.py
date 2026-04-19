@@ -1,3 +1,4 @@
+import html
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -45,6 +46,14 @@ LUCIDE_ICONS = {
 <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
 <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>''',
     'map-pin': '''<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 11 7 11s7-5.75 7-11c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>''',
+    'brain': '''<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/></svg>''',
+    'chart-column': '''<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16v-4"/><path d="M11 16V8"/><path d="M15 16v-6"/><path d="M19 16v-9"/></svg>''',
+    'triangle-alert': '''<svg class="lucide-icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>''',
+    'search': '''<svg class="lucide-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>''',
+    'lightbulb': '''<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>''',
+    'book-open': '''<svg class="lucide-icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>''',
+    'trending-down': '''<svg class="lucide-icon" viewBox="0 0 24 24"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>''',
+    'trending-up': '''<svg class="lucide-icon" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>''',
 }
 
 def lucide_icon(name: str, size_class: str = "md") -> str:
@@ -162,6 +171,196 @@ translations = {
 def t(key):
     """Translation helper function"""
     return translations[st.session_state.language].get(key, key)
+
+
+def _risk_css_class(risk: str) -> str:
+    r = (risk or "").lower()
+    if "high" in r:
+        return "high"
+    if "medium" in r:
+        return "medium"
+    return "low"
+
+
+def _issue_sev_class(severity: str) -> str:
+    s = (severity or "").lower()
+    if s == "high":
+        return "sev-high"
+    if s == "medium":
+        return "sev-medium"
+    return "sev-low"
+
+
+def _priority_css_class(priority: str) -> str:
+    p = (priority or "").lower()
+    if p == "high":
+        return "p-high"
+    if p == "medium":
+        return "p-medium"
+    return "p-low"
+
+
+def _render_results_dashboard(
+    prediction: float,
+    risk: str,
+    issues: list,
+    recommendations: list,
+    contribution_df: pd.DataFrame,
+    result: dict,
+    clean_feature,
+):
+    """Card-based layout for pipeline outputs (readability on photo background)."""
+    top_negative = contribution_df[contribution_df["Contribution"] < 0].head(3)
+    top_positive = contribution_df[contribution_df["Contribution"] > 0].head(3)
+
+    neg_items = "".join(
+        f"<li>{html.escape(clean_feature(row['Feature']))}</li>"
+        for _, row in top_negative.iterrows()
+    )
+    pos_items = "".join(
+        f"<li>{html.escape(clean_feature(row['Feature']))}</li>"
+        for _, row in top_positive.iterrows()
+    )
+
+    explain_card = f"""
+<div class="results-dashboard">
+  <div class="insight-card">
+    <div class="insight-card-header">{lucide_icon('brain', 'md')} Why this prediction?</div>
+    <div class="factor-columns">
+      <div class="factor-block down">
+        <h4>{lucide_icon('trending-down', 'sm')} Factors reducing yield</h4>
+        <ul class="insight-list">{neg_items or '<li>—</li>'}</ul>
+      </div>
+      <div class="factor-block up">
+        <h4>{lucide_icon('trending-up', 'sm')} Factors improving yield</h4>
+        <ul class="insight-list">{pos_items or '<li>—</li>'}</ul>
+      </div>
+    </div>
+  </div>
+</div>
+"""
+    st.markdown(explain_card, unsafe_allow_html=True)
+
+    risk_cls = _risk_css_class(risk)
+    yield_risk_row = f"""
+<div class="results-dashboard">
+  <div class="metric-row">
+    <div class="metric-tile">
+      <div class="label">{lucide_icon('chart-column', 'sm')} Yield prediction</div>
+      <div class="value-big">{prediction:.2f}</div>
+      <div class="unit">ton / hectare</div>
+    </div>
+    <div class="metric-tile">
+      <div class="label">{lucide_icon('triangle-alert', 'sm')} Risk level</div>
+      <div class="value-big" style="font-size:clamp(1.4rem,4vw,1.85rem);margin-top:0.25rem">
+        <span class="risk-pill {risk_cls}">{html.escape(str(risk))}</span>
+      </div>
+    </div>
+  </div>
+</div>
+"""
+    st.markdown(yield_risk_row, unsafe_allow_html=True)
+
+    if issues:
+        chips = []
+        for issue in issues:
+            typ = html.escape(str(issue.get("type", "")).capitalize())
+            sev = html.escape(str(issue.get("severity", "")))
+            sev_c = _issue_sev_class(issue.get("severity", ""))
+            chips.append(
+                f'<span class="issue-chip {sev_c}"><span>{typ}</span>'
+                f'<span class="sev">{sev}</span></span>'
+            )
+        issues_html = '<div class="issue-chips">' + "".join(chips) + "</div>"
+    else:
+        issues_html = '<div class="muted-box">No major issues detected.</div>'
+
+    issues_card = f"""
+<div class="results-dashboard">
+  <div class="insight-card accent-amber">
+    <div class="insight-card-header">{lucide_icon('search', 'md')} Detected issues</div>
+    {issues_html}
+  </div>
+</div>
+"""
+    st.markdown(issues_card, unsafe_allow_html=True)
+
+    if recommendations:
+        rows = []
+        for rec in recommendations:
+            action = html.escape(str(rec.get("action", "")))
+            pr = str(rec.get("priority", ""))
+            pc = _priority_css_class(pr)
+            rows.append(
+                f'<div class="reco-row"><span class="reco-priority {pc}">'
+                f'{html.escape(pr)}</span><p class="reco-text">{action}</p></div>'
+            )
+        rec_html = '<div class="reco-stack">' + "".join(rows) + "</div>"
+    else:
+        rec_html = '<div class="muted-box">All parameters look optimal.</div>'
+
+    rec_card = f"""
+<div class="results-dashboard">
+  <div class="insight-card">
+    <div class="insight-card-header">{lucide_icon('lightbulb', 'md')} Recommendations</div>
+    {rec_html}
+  </div>
+</div>
+"""
+    st.markdown(rec_card, unsafe_allow_html=True)
+
+    advisory = result.get("advisory")
+    advisory_parts = []
+
+    if advisory:
+        if isinstance(advisory, dict):
+            summary = advisory.get("summary", "")
+            if summary:
+                advisory_parts.append(f"<p>{html.escape(str(summary))}</p>")
+            recs = advisory.get("recommendations", [])
+            if recs:
+                li = "".join(f"<li>{html.escape(str(r))}</li>" for r in recs)
+                advisory_parts.append(f"<ul class='insight-list'>{li}</ul>")
+            risk_exp = advisory.get("risk_explanation", "")
+            if risk_exp:
+                advisory_parts.append(
+                    f"<p><strong>Risk explanation:</strong> {html.escape(str(risk_exp))}</p>"
+                )
+            actions = advisory.get("actions", [])
+            if actions:
+                li = "".join(f"<li>{html.escape(str(a))}</li>" for a in actions)
+                advisory_parts.append(f"<p><strong>Suggested actions:</strong></p><ul class='insight-list'>{li}</ul>")
+        else:
+            advisory_parts.append(f"<p>{html.escape(str(advisory))}</p>")
+        adv_body = "".join(advisory_parts) or '<div class="muted-box">No advisory text returned.</div>'
+    else:
+        adv_body = '<div class="muted-box">No advanced advisory needed (low risk scenario).</div>'
+
+    adv_card = f"""
+<div class="results-dashboard">
+  <div class="insight-card accent-blue">
+    <div class="insight-card-header">{lucide_icon('book-open', 'md')} AI advisory report</div>
+    <div class="advisory-body">{adv_body}</div>
+  </div>
+</div>
+"""
+    st.markdown(adv_card, unsafe_allow_html=True)
+
+    ctx = result.get("context")
+    if ctx:
+        knowledge = f'<div class="knowledge-body">{html.escape(str(ctx))}</div>'
+    else:
+        knowledge = '<div class="muted-box">Not required (low risk scenario).</div>'
+
+    know_card = f"""
+<div class="results-dashboard">
+  <div class="insight-card">
+    <div class="insight-card-header">{lucide_icon('sprout', 'md')} Knowledge sources</div>
+    {knowledge}
+  </div>
+</div>
+"""
+    st.markdown(know_card, unsafe_allow_html=True)
 
 # ================= BACKGROUND IMAGE SETUP =================
 
@@ -963,6 +1162,258 @@ st.markdown("""
         margin-top: 12px;
         font-weight: 400;
     }
+
+    /* —— Prediction results: modern card dashboard —— */
+    .results-dashboard {
+        max-width: 1080px;
+        margin: 2rem auto 1.5rem auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.1rem;
+    }
+
+    .insight-card {
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(18px) saturate(160%);
+        border-radius: 18px;
+        padding: 1.35rem 1.5rem 1.45rem 1.5rem;
+        box-shadow:
+            0 12px 40px rgba(15, 40, 25, 0.1),
+            0 2px 10px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.95);
+        border-left: 4px solid #2e7d32;
+        color: #1a2e22;
+    }
+
+    .insight-card.accent-amber { border-left-color: #f9a825; }
+    .insight-card.accent-blue { border-left-color: #1e88e5; }
+
+    .insight-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.08rem;
+        font-weight: 800;
+        color: #14532d;
+        margin: 0 0 1rem 0;
+        letter-spacing: -0.02em;
+    }
+
+    .insight-card-header .lucide-icon { color: #2e7d32; }
+
+    .factor-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 720px) {
+        .factor-columns { grid-template-columns: 1fr; }
+    }
+
+    .factor-block {
+        background: linear-gradient(145deg, #f8faf8 0%, #f1f8f4 100%);
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        border: 1px solid rgba(46, 125, 50, 0.12);
+    }
+
+    .factor-block h4 {
+        margin: 0 0 0.55rem 0;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .factor-block.down h4 { color: #c62828; }
+    .factor-block.up h4 { color: #2e7d32; }
+
+    .insight-list {
+        margin: 0;
+        padding-left: 1.15rem;
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: #37474f;
+    }
+
+    .insight-list li { margin-bottom: 0.2rem; }
+
+    .metric-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 720px) {
+        .metric-row { grid-template-columns: 1fr; }
+    }
+
+    .metric-tile {
+        background: linear-gradient(160deg, #ffffff 0%, #e8f5e9 55%);
+        border-radius: 16px;
+        padding: 1.25rem 1.35rem;
+        text-align: center;
+        border: 1px solid rgba(46, 125, 50, 0.18);
+        box-shadow: 0 6px 20px rgba(27, 94, 32, 0.08);
+    }
+
+    .metric-tile .label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #558b2f;
+        margin-bottom: 0.35rem;
+    }
+
+    .metric-tile .value-big {
+        font-size: clamp(1.85rem, 5vw, 2.5rem);
+        font-weight: 900;
+        color: #1b5e20;
+        line-height: 1.15;
+    }
+
+    .metric-tile .unit {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #33691e;
+        margin-top: 0.15rem;
+    }
+
+    .risk-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0.35rem;
+        padding: 0.45rem 1.15rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        letter-spacing: 0.02em;
+    }
+
+    .risk-pill.low {
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        color: #1b5e20;
+        border: 1px solid #81c784;
+    }
+
+    .risk-pill.medium {
+        background: linear-gradient(135deg, #fff8e1, #ffecb3);
+        color: #f57f17;
+        border: 1px solid #ffd54f;
+    }
+
+    .risk-pill.high {
+        background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        color: #b71c1c;
+        border: 1px solid #e57373;
+    }
+
+    .issue-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .issue-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.85rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid transparent;
+    }
+
+    .issue-chip .sev {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 0.15rem 0.45rem;
+        border-radius: 6px;
+    }
+
+    .issue-chip.sev-high {
+        background: #ffebee;
+        color: #c62828;
+        border-color: #ffcdd2;
+    }
+    .issue-chip.sev-high .sev { background: #ef5350; color: white; }
+
+    .issue-chip.sev-medium {
+        background: #fff8e1;
+        color: #ef6c00;
+        border-color: #ffe082;
+    }
+    .issue-chip.sev-medium .sev { background: #ffb300; color: #3e2723; }
+
+    .issue-chip.sev-low {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-color: #c8e6c9;
+    }
+    .issue-chip.sev-low .sev { background: #66bb6a; color: white; }
+
+    .reco-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    .reco-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 0.9rem;
+        background: #fafcfa;
+        border-radius: 12px;
+        border: 1px solid rgba(46, 125, 50, 0.1);
+    }
+
+    .reco-priority {
+        flex-shrink: 0;
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 0.28rem 0.55rem;
+        border-radius: 8px;
+        line-height: 1.2;
+    }
+
+    .reco-priority.p-high { background: #ffcdd2; color: #b71c1c; }
+    .reco-priority.p-medium { background: #ffe082; color: #e65100; }
+    .reco-priority.p-low { background: #c8e6c9; color: #1b5e20; }
+
+    .reco-text {
+        font-size: 0.95rem;
+        line-height: 1.55;
+        color: #263238;
+        margin: 0;
+    }
+
+    .advisory-body, .knowledge-body {
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: #37474f;
+    }
+
+    .advisory-body p { margin: 0 0 0.65rem 0; }
+
+    .muted-box {
+        padding: 0.85rem 1rem;
+        background: #f5f9f6;
+        border-radius: 12px;
+        border: 1px dashed rgba(46, 125, 50, 0.25);
+        color: #546e7a;
+        font-size: 0.92rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1161,80 +1612,22 @@ if submit_button:
             recommendations = result["recommendations"]
             contribution_df = result["contributions"]
 
-            # ================= EXPLAINABILITY =================
-            st.subheader("🧠 Why this prediction?")
-
             def clean_feature(name):
                 return (
-                    name.replace("_", " ")
+                    str(name).replace("_", " ")
                         .replace("Crop Type", "Crop")
                         .replace("Fertilizer Used", "Fertilizer usage")
                 )
 
-            top_negative = contribution_df[contribution_df["Contribution"] < 0].head(3)
-            top_positive = contribution_df[contribution_df["Contribution"] > 0].head(3)
-
-            st.write("🔻 Factors reducing yield:")
-            for _, row in top_negative.iterrows():
-                st.write(f"- {clean_feature(row['Feature'])}")
-
-            st.write("🔺 Factors improving yield:")
-            for _, row in top_positive.iterrows():
-                st.write(f"- {clean_feature(row['Feature'])}")
-
-            # ================= OUTPUT =================
-            st.subheader("📊 Yield Prediction")
-            st.write(f"{prediction:.2f} ton/hectare")
-
-            st.subheader("⚠️ Risk Level")
-            st.write(risk)
-
-            st.subheader("🔍 Detected Issues")
-            if issues:
-                for issue in issues:
-                    st.write(f"- {issue['type'].capitalize()} ({issue['severity']})")
-            else:
-                st.write("No major issues detected")
-
-            st.subheader("💡 Recommendations")
-            if recommendations:
-                for rec in recommendations:
-                    st.write(f"- {rec['action']} (Priority: {rec['priority']})")
-            else:
-                st.write("All parameters look optimal")
-
-            # rag and llm generated (phase 4)
-            st.subheader("📘 AI Advisory Report")
-
-            advisory = result.get("advisory")
-
-            if advisory:
-                if isinstance(advisory, dict):
-                    summary = advisory.get("summary", "")
-                    if summary:
-                        st.write(summary)
-                    recs = advisory.get("recommendations", [])
-                    if recs:
-                        for rec in recs:
-                            st.write(f"- {rec}")
-                    risk_exp = advisory.get("risk_explanation", "")
-                    if risk_exp:
-                        st.write(f"**Risk Explanation:** {risk_exp}")
-                    actions = advisory.get("actions", [])
-                    if actions:
-                        st.write("**Suggested Actions:**")
-                        for action in actions:
-                            st.write(f"- {action}")
-                else:
-                    st.write(advisory)
-            else:
-                st.write("No advanced advisory needed (Low Risk scenario).")
-
-            st.subheader("📚 Knowledge Sources")
-            if result["context"]:
-                st.write(result["context"])
-            else:
-                st.write("Not required (Low Risk scenario)")
+            _render_results_dashboard(
+                prediction=prediction,
+                risk=risk,
+                issues=issues,
+                recommendations=recommendations,
+                contribution_df=contribution_df,
+                result=result,
+                clean_feature=clean_feature,
+            )
 
         except Exception as e:
             st.error(f"{t('error_msg')}")
