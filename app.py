@@ -1164,32 +1164,23 @@ if submit_button:
             # ================= EXPLAINABILITY =================
             st.subheader("🧠 Why this prediction?")
 
+            def clean_feature(name):
+                return (
+                    name.replace("_", " ")
+                        .replace("Crop Type", "Crop")
+                        .replace("Fertilizer Used", "Fertilizer usage")
+                )
+
             top_negative = contribution_df[contribution_df["Contribution"] < 0].head(3)
             top_positive = contribution_df[contribution_df["Contribution"] > 0].head(3)
 
             st.write("🔻 Factors reducing yield:")
             for _, row in top_negative.iterrows():
-                def clean_feature(name):
-                    return (
-                        name.replace("_", " ")
-                            .replace("Crop Type", "Crop")
-                            .replace("Fertilizer Used", "Fertilizer usage")
-                    )
-
-                feature = clean_feature(row['Feature'])
-                st.write(f"- {feature}")
+                st.write(f"- {clean_feature(row['Feature'])}")
 
             st.write("🔺 Factors improving yield:")
             for _, row in top_positive.iterrows():
-                def clean_feature(name):
-                    return (
-                        name.replace("_", " ")
-                            .replace("Crop Type", "Crop")
-                            .replace("Fertilizer Used", "Fertilizer usage")
-                    )
-
-                feature = clean_feature(row['Feature'])
-                st.write(f"- {feature}")
+                st.write(f"- {clean_feature(row['Feature'])}")
 
             # ================= OUTPUT =================
             st.subheader("📊 Yield Prediction")
@@ -1212,21 +1203,31 @@ if submit_button:
             else:
                 st.write("All parameters look optimal")
 
-            # rag and llm generated(added phase 4)
+            # rag and llm generated (phase 4)
             st.subheader("📘 AI Advisory Report")
 
             advisory = result.get("advisory")
 
             if advisory:
-                st.subheader("📘 AI Advisory Report")
                 if isinstance(advisory, dict):
-                    st.write(advisory.get("summary", ""))
-                    for rec in advisory.get("recommendations", []):
-                        st.write(f"- {rec}")
+                    summary = advisory.get("summary", "")
+                    if summary:
+                        st.write(summary)
+                    recs = advisory.get("recommendations", [])
+                    if recs:
+                        for rec in recs:
+                            st.write(f"- {rec}")
+                    risk_exp = advisory.get("risk_explanation", "")
+                    if risk_exp:
+                        st.write(f"**Risk Explanation:** {risk_exp}")
+                    actions = advisory.get("actions", [])
+                    if actions:
+                        st.write("**Suggested Actions:**")
+                        for action in actions:
+                            st.write(f"- {action}")
                 else:
                     st.write(advisory)
             else:
-                st.subheader("📘 AI Advisory Report")
                 st.write("No advanced advisory needed (Low Risk scenario).")
 
             st.subheader("📚 Knowledge Sources")

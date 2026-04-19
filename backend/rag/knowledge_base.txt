@@ -1,11 +1,108 @@
-Low rainfall can severely impact crop yield by causing water stress. 
-Farmers should use irrigation methods such as drip or sprinkler systems.
+NITROGEN DEFICIENCY
+Low nitrogen levels reduce vegetative growth, cause yellowing of leaves, and significantly lower crop yield.
+Nitrogen is essential for chlorophyll production and protein synthesis in plants.
+Apply urea (46-0-0) at 100-150 kg/ha to correct nitrogen deficiency in wheat and rice crops.
+Split nitrogen application into two doses — at sowing and at tillering stage — for better absorption.
+Organic sources like farmyard manure and green manure also help restore nitrogen levels over time.
 
-Low phosphorus levels reduce root development and crop productivity. 
-Applying DAP fertilizer improves phosphorus content.
+PHOSPHORUS DEFICIENCY
+Low phosphorus reduces root development, delays maturity, and lowers grain quality.
+Phosphorus is critical for energy transfer and root elongation in all cereal crops.
+Apply DAP (Di-Ammonium Phosphate) at 100 kg/ha as a basal dose before sowing to correct phosphorus deficiency.
+Single super phosphate (SSP) is a cost-effective alternative for phosphorus supplementation.
+Phosphorus availability is highest at soil pH between 6.0 and 7.0.
 
-Low nitrogen reduces vegetative growth and affects yield. 
-Use nitrogen-rich fertilizers like urea.
+POTASSIUM DEFICIENCY
+Low potassium weakens plant cell walls, reduces disease resistance, and causes poor grain filling.
+Potassium improves drought tolerance and water use efficiency in crops like maize and wheat.
+Apply muriate of potash (MOP) at 60-80 kg/ha to restore potassium levels.
+Potassium deficiency symptoms include scorching of leaf margins and weak stems.
+Sandy soils are more prone to potassium leaching and require more frequent application.
 
-High temperatures can damage crops and reduce grain formation. 
-Use heat-resistant crop varieties and proper irrigation.
+SOIL pH — ACIDIC CONDITIONS
+Soil pH below 5.5 causes aluminum and manganese toxicity, which inhibits root growth.
+Acidic soils reduce availability of phosphorus, calcium, and magnesium to plants.
+Apply agricultural lime (calcium carbonate) at 2-4 tonnes/ha to raise soil pH.
+Dolomitic lime also supplies magnesium along with correcting acidity.
+Liming should be done 4-6 weeks before sowing for best results.
+
+SOIL pH — ALKALINE CONDITIONS
+Soil pH above 7.5 causes iron, zinc, and manganese deficiency in crops.
+Alkaline soils are common in arid and semi-arid regions with low rainfall.
+Apply gypsum (calcium sulfate) at 2-3 tonnes/ha to reduce soil pH gradually.
+Elemental sulfur at 200-500 kg/ha is effective for strongly alkaline soils.
+Organic matter addition helps buffer soil pH and improve nutrient availability.
+
+SOIL FERTILITY AND ORGANIC CARBON
+Organic carbon below 0.5% indicates poor soil health and low microbial activity.
+Low organic matter reduces water retention, nutrient cycling, and soil structure.
+Apply farmyard manure at 10-15 tonnes/ha or compost at 5-8 tonnes/ha to improve organic carbon.
+Green manuring with legumes like dhaincha or sunhemp adds nitrogen and organic matter simultaneously.
+Crop residue incorporation instead of burning significantly improves organic carbon over 2-3 seasons.
+
+RAINFALL AND IRRIGATION
+Low rainfall below 500 mm per season causes water stress, wilting, and yield loss.
+Water stress during flowering and grain filling stages is most damaging to yield.
+Drip irrigation improves water use efficiency by 40-50% compared to flood irrigation.
+Sprinkler irrigation is suitable for wheat, maize, and vegetables in water-scarce regions.
+Mulching with crop residues reduces soil moisture evaporation by up to 30%.
+Rainwater harvesting and farm ponds help buffer against erratic rainfall patterns.
+
+HEAT STRESS
+Temperatures above 38°C during flowering cause pollen sterility and poor grain set.
+Heat stress accelerates crop maturity, reducing the grain filling period and final yield.
+Use heat-tolerant varieties such as HD-3086 for wheat or DRR Dhan 42 for rice in high-temperature zones.
+Irrigate crops during evening hours to reduce canopy temperature during heat waves.
+Mulching and intercropping with shade-providing plants can reduce soil surface temperature.
+
+WHEAT CROP MANAGEMENT
+Wheat grows best at temperatures between 15-25°C during vegetative stage and 20-25°C during grain filling.
+Optimal soil pH for wheat is 6.0-7.5 with well-drained loamy or clay-loam soils.
+Wheat requires 450-650 mm of water over the growing season.
+Recommended NPK for wheat: 120-60-40 kg/ha for irrigated conditions.
+Sowing in Rabi season (October-November) gives best yields in North India.
+Common wheat diseases include rust, powdery mildew, and loose smut — use resistant varieties.
+
+RICE CROP MANAGEMENT
+Rice thrives in warm, humid conditions with temperatures between 20-35°C.
+Paddy requires 1000-2000 mm of water and grows best in clay or clay-loam soils with good water retention.
+Recommended NPK for rice: 100-50-50 kg/ha under transplanted conditions.
+System of Rice Intensification (SRI) can reduce water use by 25-50% while maintaining yield.
+Kharif season (June-July transplanting) is optimal for rice in most Indian regions.
+Blast, bacterial blight, and brown planthopper are major rice pests — monitor regularly.
+
+MAIZE CROP MANAGEMENT
+Maize requires temperatures between 18-32°C and well-drained loamy soils with pH 5.8-7.0.
+Maize is sensitive to waterlogging — ensure proper field drainage.
+Recommended NPK for maize: 150-75-75 kg/ha with split nitrogen application.
+Maize needs 500-800 mm of water, with critical periods at tasseling and silking stages.
+Kharif maize (June-July sowing) and Rabi maize (October-November) are both viable in India.
+Fall armyworm is a major emerging pest in maize — use pheromone traps for early detection.
+
+IRRIGATION TYPES
+Drip irrigation delivers water directly to the root zone, minimizing evaporation and weed growth.
+Sprinkler irrigation is suitable for uneven terrain and crops like wheat, groundnut, and vegetables.
+Flood irrigation is the most common but least efficient method, suitable for rice and sugarcane.
+Rainfed farming depends entirely on monsoon and is high-risk in low-rainfall zones.
+Micro-irrigation adoption can increase water productivity by 30-50% in water-scarce regions.
+
+SEASONAL GUIDANCE
+Kharif crops (sown June-July, harvested October-November): rice, maize, cotton, soybean, groundnut.
+Rabi crops (sown October-November, harvested March-April): wheat, barley, mustard, chickpea.
+Zaid crops (sown March-April, harvested June): watermelon, cucumber, muskmelon, fodder crops.
+Crop rotation between Kharif and Rabi seasons helps break pest cycles and improve soil health.
+Intercropping legumes with cereals improves nitrogen fixation and reduces fertilizer costs.
+
+REGIONAL GUIDANCE
+North India (Punjab, Haryana, UP): wheat-rice rotation dominates; focus on water table management.
+South India (AP, Karnataka, Tamil Nadu): rice, maize, and pulses; red and black soils common.
+East India (Bihar, West Bengal, Odisha): high rainfall; rice dominant; flooding risk management critical.
+West India (Maharashtra, Gujarat, Rajasthan): dryland farming; drought-resistant varieties essential.
+Central India (MP, Chhattisgarh): soybean-wheat rotation; black cotton soils with high water retention.
+
+SOIL TYPES
+Loamy soil: ideal for most crops; good water retention and drainage; high fertility.
+Clay soil: high water retention; suitable for rice and sugarcane; prone to waterlogging.
+Sandy soil: low water and nutrient retention; requires frequent irrigation and fertilization.
+Red soil: low nitrogen and phosphorus; suitable for groundnut, millets, and pulses with amendments.
+Black soil (Vertisol): high clay content; excellent for cotton and soybean; cracks when dry.

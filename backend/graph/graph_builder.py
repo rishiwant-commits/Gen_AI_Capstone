@@ -1,20 +1,15 @@
 from langgraph.graph import StateGraph, END
 
+from backend.core.state import FarmState
 from backend.graph.nodes import get_nodes
 from backend.graph.edges import risk_router
 
 
 def build_graph(model, scaler, columns):
-    """
-    Builds and compiles the LangGraph with injected dependencies.
-    """
+    graph = StateGraph(FarmState)
 
-    graph = StateGraph(dict)
-
-    # ================= GET NODES WITH DEPENDENCIES =================
     nodes = get_nodes(model, scaler, columns)
 
-    # -------- ADD NODES --------
     graph.add_node("preprocess", nodes["preprocess"])
     graph.add_node("predict", nodes["predict"])
     graph.add_node("issue", nodes["issue"])
@@ -24,7 +19,6 @@ def build_graph(model, scaler, columns):
     graph.add_node("rag", nodes["rag"])
     graph.add_node("advisory", nodes["advisory"])
 
-    # -------- FLOW --------
     graph.set_entry_point("preprocess")
 
     graph.add_edge("preprocess", "predict")
@@ -33,7 +27,6 @@ def build_graph(model, scaler, columns):
     graph.add_edge("risk", "recommend")
     graph.add_edge("recommend", "explain")
 
-    # -------- CONDITIONAL BRANCH --------
     graph.add_conditional_edges(
         "explain",
         risk_router,
@@ -43,7 +36,6 @@ def build_graph(model, scaler, columns):
         }
     )
 
-    # -------- RAG → LLM → END --------
     graph.add_edge("rag", "advisory")
     graph.add_edge("advisory", END)
 

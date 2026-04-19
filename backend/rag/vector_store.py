@@ -22,7 +22,7 @@ def load_vector_store():
     with open("backend/rag/knowledge_base.txt", "r") as f:
         text = f.read()
 
-    splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=50)
+    splitter = CharacterTextSplitter(chunk_size=600, chunk_overlap=80)
     docs = splitter.create_documents([text])
 
     db = FAISS.from_documents(docs, embeddings)

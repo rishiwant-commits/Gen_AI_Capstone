@@ -1,17 +1,18 @@
 from backend.rag.retriever import retrieve_knowledge
 
+
 def rag_tool(state):
     data = state["input"]
-    issues = [i["type"] for i in state["issues"]]
+    issue_types = [i["type"] for i in state["issues"]]
 
-    query = f"""
-    Crop: {data['Crop_Type']}
-    Issues: {issues}
-    Rainfall: {data.get('Rainfall')}
-    Soil: {data.get('Soil_Type')}
-    """
+    query = (
+        f"Crop: {data['Crop_Type']}. "
+        f"Issues: {', '.join(issue_types)}. "
+        f"Rainfall: {data.get('Rainfall')} mm. "
+        f"Soil type: {data.get('Soil_Type')}. "
+        f"Season: {data.get('Season')}."
+    )
 
     context = retrieve_knowledge(query)
-
     state["context"] = context
     return state
