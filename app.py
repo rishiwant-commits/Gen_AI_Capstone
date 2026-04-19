@@ -1196,6 +1196,13 @@ if submit_button:
             else:
                 st.write("All parameters look optimal")
 
+            # rag and llm generated(added phase 4)
+            st.subheader("📘 AI Advisory Report")
+            st.write(result["advisory"])
+
+            st.subheader("📚 Knowledge Sources")
+            st.write(result["context"])
+
         except Exception as e:
             st.error(f"{t('error_msg')}")
             st.exception(e)

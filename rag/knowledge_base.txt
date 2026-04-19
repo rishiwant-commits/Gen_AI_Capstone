@@ -1,0 +1,19 @@
+Crop: Wheat
+Condition: Low Nitrogen
+Impact: Reduced vegetative growth and yield
+Solution: Apply urea or nitrogen-rich fertilizer
+
+Crop: Rice
+Condition: Low Rainfall
+Impact: Water stress reduces yield
+Solution: Use irrigation or water retention methods
+
+Crop: Maize
+Condition: High Temperature
+Impact: Heat stress reduces grain formation
+Solution: Use heat-resistant varieties or shading
+
+Crop: Cotton
+Condition: Low Organic Carbon
+Impact: Poor soil fertility
+Solution: Add compost or organic manure

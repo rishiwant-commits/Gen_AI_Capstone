@@ -7,6 +7,7 @@ from backend.intelligence.issue_detector import detect_issues
 from backend.intelligence.risk_analyzer import analyze_risk
 from backend.intelligence.recommender import generate_recommendations
 from backend.intelligence.explainer import get_feature_contributions
+from backend.llm.advisor import generate_advisory
 
 
 # ================= LOAD ARTIFACTS (LOAD ONCE) =================
@@ -42,9 +43,11 @@ def run_pipeline(user_input_dict):
 
     # ================= FINAL OUTPUT =================
     return {
-        "prediction": float(prediction),   # ensure JSON-safe
+        "prediction": float(prediction),
         "risk": risk,
         "issues": issues,
         "recommendations": recommendations,
-        "contributions": contribution_df
+        "contributions": contribution_df,
+        "advisory": advisory,
+        "context": context
     }
