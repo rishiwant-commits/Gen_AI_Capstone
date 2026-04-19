@@ -7,8 +7,8 @@ def rag_tool(state):
     query = f"""
     Crop: {data['Crop_Type']}
     Issues: {issues}
+    Rainfall: {data.get('Rainfall')}
     Soil: {data.get('Soil_Type')}
-    Season: {data.get('Season')}
     """
 
     context = retrieve_knowledge(query)

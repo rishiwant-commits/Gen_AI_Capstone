@@ -1169,12 +1169,26 @@ if submit_button:
 
             st.write("🔻 Factors reducing yield:")
             for _, row in top_negative.iterrows():
-                feature = row['Feature'].replace("_", " ")
+                def clean_feature(name):
+                    return (
+                        name.replace("_", " ")
+                            .replace("Crop Type", "Crop")
+                            .replace("Fertilizer Used", "Fertilizer usage")
+                    )
+
+                feature = clean_feature(row['Feature'])
                 st.write(f"- {feature}")
 
             st.write("🔺 Factors improving yield:")
             for _, row in top_positive.iterrows():
-                feature = row['Feature'].replace("_", " ")
+                def clean_feature(name):
+                    return (
+                        name.replace("_", " ")
+                            .replace("Crop Type", "Crop")
+                            .replace("Fertilizer Used", "Fertilizer usage")
+                    )
+
+                feature = clean_feature(row['Feature'])
                 st.write(f"- {feature}")
 
             # ================= OUTPUT =================

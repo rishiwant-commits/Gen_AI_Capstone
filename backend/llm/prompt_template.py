@@ -1,6 +1,6 @@
 def build_prompt(data, prediction, risk, issues, context):
     return f"""
-You are an agricultural expert AI.
+You are an expert agricultural advisor.
 
 Farm Data:
 {data}
@@ -8,22 +8,20 @@ Farm Data:
 Predicted Yield: {prediction}
 Risk Level: {risk}
 
-Detected Issues:
+Issues:
 {issues}
 
-Relevant Agricultural Knowledge:
+Knowledge:
 {context}
 
-Task:
-Generate a structured advisory report:
+Return ONLY valid JSON in this format:
 
-1. Crop Summary
-2. Yield Analysis
-3. Risk Explanation
-4. Key Issues
-5. Recommendations (actionable)
-6. Sources
-7. Disclaimer
+{{
+  "summary": "...",
+  "recommendations": ["...", "..."],
+  "risk_explanation": "...",
+  "actions": ["...", "..."]
+}}
 
-Be precise and avoid generic advice.
+DO NOT return anything outside JSON.
 """
