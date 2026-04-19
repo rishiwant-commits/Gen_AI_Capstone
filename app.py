@@ -5,10 +5,7 @@ import joblib
 import time
 import base64
 
-from intelligence.issue_detector import detect_issues
-from intelligence.risk_analyzer import analyze_risk
-from intelligence.recommender import generate_recommendations
-from intelligence.explainer import get_feature_contributions
+from backend.main import run_pipeline
 
 # ================= LUCIDE SVG ICONS =================
 LUCIDE_ICONS = {
@@ -55,10 +52,10 @@ def lucide_icon(name: str, size_class: str = "md") -> str:
     svg = LUCIDE_ICONS.get(name, LUCIDE_ICONS['agriculture'])
     return f'<span class="lucide-icon {size_class}">{svg}</span>'
 
-# ================= LOAD ARTIFACTS =================
-model = joblib.load("model.pkl")
-scaler = joblib.load("scaler.pkl")
-columns = joblib.load("column.pkl")
+# # ================= LOAD ARTIFACTS =================
+# model = joblib.load("model.pkl")
+# scaler = joblib.load("scaler.pkl")
+# columns = joblib.load("column.pkl")
 
 # ================= PAGE CONFIG =================
 st.set_page_config(
@@ -1128,12 +1125,11 @@ with st.form("prediction_form"):
 
 # ================= PREDICTION =================
 if submit_button:
-    # Show loading animation
     with st.spinner(t('analyzing')):
-        time.sleep(1.5)  # Simulate AI processing
+        time.sleep(1.5)
         
         try:
-            # Collect all inputs
+            # ================= INPUT =================
             user_input_dict = {
                 "N": N,
                 "P": P,
@@ -1155,119 +1151,51 @@ if submit_button:
                 "Crop_Type": Crop_Type,
                 "Irrigation_Type": Irrigation_Type
             }
-            
-            # Create DataFrame with all columns initialized to 0
-            input_df = pd.DataFrame(np.zeros((1, len(columns))), columns=columns)
-            
-            # Fill numeric values
-            for key, value in input_data.items():
-                if key in input_df.columns:
-                    input_df[key] = float(value)
-            
-            # Handle one-hot encoded categorical columns
-            categorical_fields = {
-                'Soil_Type': Soil_Type,
-                'Region': Region,
-                'Season': Season,
-                'Crop_Type': Crop_Type,
-                'Irrigation_Type': Irrigation_Type
-            }
-            
-            for field, value in categorical_fields.items():
-                col_name = f"{field}_{value}"
-                if col_name in input_df.columns:
-                    input_df[col_name] = 1
 
-            contribution_df = get_feature_contributions(
-            model,
-            final_input_df,
-            scaler,
-            final_input_df.columns
-        )
-            
-            # Scale and predict
-            input_scaled = scaler.transform(input_df)
-            prediction = model.predict(input_scaled)[0]
+            # ================= PIPELINE =================
+            result = run_pipeline(user_input_dict)
 
-            # ================= INTELLIGENCE LAYER =================
+            prediction = result["prediction"]
+            risk = result["risk"]
+            issues = result["issues"]
+            recommendations = result["recommendations"]
+            contribution_df = result["contributions"]
 
-            issues = detect_issues(user_input_dict)
-            risk = analyze_risk(prediction)
-            recommendations = generate_recommendations(issues)
-
-            st.subheader("Why this prediction? (Feature Impact)")
+            # ================= EXPLAINABILITY =================
+            st.subheader("🧠 Why this prediction?")
 
             top_negative = contribution_df[contribution_df["Contribution"] < 0].head(3)
             top_positive = contribution_df[contribution_df["Contribution"] > 0].head(3)
 
-            st.write("Factors reducing yield:")
+            st.write("🔻 Factors reducing yield:")
             for _, row in top_negative.iterrows():
                 st.write(f"- {row['Feature']}")
 
-            st.write("Factors improving yield:")
+            st.write("🔺 Factors improving yield:")
             for _, row in top_positive.iterrows():
                 st.write(f"- {row['Feature']}")
 
-
-            st.subheader("Yield Prediction")
+            # ================= OUTPUT =================
+            st.subheader("📊 Yield Prediction")
             st.write(f"{prediction:.2f} ton/hectare")
 
-            st.subheader("Risk Level")
+            st.subheader("⚠️ Risk Level")
             st.write(risk)
 
-            st.subheader("Detected Issues")
+            st.subheader("🔍 Detected Issues")
             if issues:
                 for issue in issues:
                     st.write(f"- {issue}")
             else:
                 st.write("No major issues detected")
 
-            st.subheader("Recommendations")
+            st.subheader("💡 Recommendations")
             if recommendations:
                 for rec in recommendations:
                     st.write(f"- {rec}")
             else:
                 st.write("All parameters look optimal")
-            
-            # Calculate confidence (simplified - based on input completeness)
-            confidence = t('high') if prediction > 5 else t('medium')
-            confidence_color = "#4CAF50" if prediction > 5 else "#FF9800"
-            
-            # Display result with animation
-            st.markdown(f"""
-            <div class="result-box">
-                <div class="result-title">{lucide_icon("agriculture", "lg")} {t('result_title')}</div>
-                <div class="result-value">{prediction:.2f}</div>
-                <div class="result-unit">ton/hectare</div>
-                <div class="confidence-badge" style="background-color: {confidence_color};">
-                    {t('confidence')}: {confidence}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Summary chips
-            st.markdown(f"""
-            <div style="text-align: center; margin: 20px auto; max-width: 900px;">
-                <span class="summary-chip">{lucide_icon("agriculture", "sm")} {t('crop_type')}: {Crop_Type}</span>
-                <span class="summary-chip">📅 {t('season')}: {Season}</span>
-                <span class="summary-chip">{lucide_icon("droplets", "sm")} {t('irrigation')}: {Irrigation_Type}</span>
-                <span class="summary-chip">{lucide_icon("map-pin", "sm")} {t('region')}: {Region}</span>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Detailed metrics
-            st.markdown('<div style="max-width: 1000px; margin: 0 auto;">', unsafe_allow_html=True)
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.markdown(f'<div class="metric-card">{lucide_icon("thermometer", "sm")} <strong>Temperature</strong><div class="metric-card-value">{Temperature}°C</div></div>', unsafe_allow_html=True)
-            with col2:
-                st.markdown(f'<div class="metric-card">{lucide_icon("droplets", "sm")} <strong>Humidity</strong><div class="metric-card-value">{Humidity}%</div></div>', unsafe_allow_html=True)
-            with col3:
-                st.markdown(f'<div class="metric-card">{lucide_icon("cloud", "sm")} <strong>Rainfall</strong><div class="metric-card-value">{Rainfall} mm</div></div>', unsafe_allow_html=True)
-            with col4:
-                st.markdown(f'<div class="metric-card">{lucide_icon("sun", "sm")} <strong>Sunlight</strong><div class="metric-card-value">{Sunlight_Hours} hrs</div></div>', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-            
+
         except Exception as e:
             st.error(f"{t('error_msg')}")
             st.exception(e)
