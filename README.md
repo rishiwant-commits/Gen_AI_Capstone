@@ -71,6 +71,8 @@ User Input (Streamlit UI)
   - Crop & management: crop type, season, irrigation type, region, fertilizer, pesticide
 - Mobile-responsive design with glassmorphism UI
 
+- dataset source -  https://www.kaggle.com/datasets/miadul/smart-crop-recommendation-dataset
+
 ### Milestone 2 — Agentic AI Pipeline
 - LangGraph-based agent with 8 nodes and conditional routing
 - Rule-based issue detection covering 8 agricultural problems:
